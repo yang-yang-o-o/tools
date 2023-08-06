@@ -1,8 +1,3 @@
-# import open3d as _3d
-# pcd = _3d.io.read_point_cloud("1.ply")
-# # pcd = _3d.io.read_triangle_mesh("1.ply")
-# _3d.visualization.draw_geometries([pcd])
-
 # Author: Tomas Hodan (hodantom@cmp.felk.cvut.cz)
 # Center for Machine Perception, Czech Technical University in Prague
 
@@ -285,3 +280,8 @@ if __name__ == '__main__':
 
     out_views_vis_path = 'view_sphere_test.ply'
     save_vis(out_views_vis_path, views)
+
+    # import open3d as _3d
+    # pcd = _3d.io.read_point_cloud("1.ply")
+    # # pcd = _3d.io.read_triangle_mesh("1.ply")
+    # _3d.visualization.draw_geometries([pcd])
