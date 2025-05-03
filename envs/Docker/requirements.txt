@@ -121,6 +121,7 @@ protobuf                        == 5.29.3
 psutil                          == 7.0.0
 ptyprocess                      == 0.7.0
 pure_eval                       == 0.2.3
+pyarrow                         == 20.0.0
 pycocoevalcap                   == 1.2
 pycocotools                     == 2.0.8
 pycparser                       == 2.22
@@ -139,6 +140,7 @@ PyYAML                          == 6.0.2
 rdkit                           == 2024.9.5
 regex                           == 2024.11.6
 requests
+rerun-sdk                       == 0.23.1    
 rich                            == 13.4.2
 ruamel.yaml                     == 0.18.10
 ruamel.yaml.clib                == 0.2.12

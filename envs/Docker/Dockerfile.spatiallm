@@ -1,5 +1,5 @@
-ARG PYTORCH="2.4.0"
-ARG CUDA="12.1"
+ARG PYTORCH="2.4.1"
+ARG CUDA="12.4"
 ARG CUDNN="9"
 
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
@@ -12,25 +12,24 @@ ENV TORCH_CUDA_ARCH_LIST="6.0 6.1 7.0 7.5 8.0 8.6+PTX" \
 
 # Install the required packages
 RUN apt-get update \
-    && apt-get install -y ffmpeg libsm6 libxext6 git \
+    && apt-get install -y ffmpeg libsm6 libxext6 git git-lfs\
         ninja-build libglib2.0-0 libsm6 libxrender-dev \
         libxext6 wget vim ncurses-bin zsh curl inetutils-ping \
-        net-tools telnet traceroute\
+        net-tools telnet traceroute libsparsehash-dev libxkbcommon-x11-0\
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install MMDetection
-RUN conda clean --all \
-    && conda create -y -n SpatialLM python=3.10 \
-    && git clone https://github.com/manycore-research/SpatialLM.git /SpatialLM \
-    && cd /SpatialLM
     
 RUN git clone https://github.com/yang-yang-o-o/tools.git ~/tools \
-    && conda run -n SpatialLM pip install -r ~/tools/envs/Docker/requirements.txt \
     && bash ~/tools/envs/zsh/install.sh \
     && mv ~/tools/envs/zsh/.zshrc ~/ \
     && /bin/bash -c "source ~/.zshrc" \
     && /bin/bash -c "chsh -s $(which zsh)"
+
+# Install MMDetection
+RUN conda clean --all \
+    && conda create -y -n SpatialLM python=3.11 \
+    && git clone https://github.com/manycore-research/SpatialLM.git /SpatialLM
     
 # 设置默认环境为 groundingpose
 ENV PATH=/opt/conda/envs/SpatialLM/bin:$PATH
@@ -39,6 +38,19 @@ ENV CONDA_DEFAULT_ENV=SpatialLM
 # 默认进入 GroundingPose 目录
 WORKDIR /SpatialLM
 
+RUN cd /SpatialLM \
+    && pip install poetry && poetry config virtualenvs.create false --local \
+    && poetry install \
+    && pip install ninja rootpath \
+    && git clone https://github.com/mit-han-lab/torchsparse.git \
+    && cd torchsparse \
+    && export TORCH_CUDA_ARCH_LIST="7.5" && export MAX_JOBS=2 \
+    && python setup.py install
+
+RUN cd /SpatialLM \
+    && git lfs install \
+    && git clone https://huggingface.co/manycore-research/SpatialLM-Qwen-0.5B \
+    && git clone https://huggingface.co/manycore-research/SpatialLM-Llama-1B
 # 默认命令（可以改为你需要运行的脚本）
 # CMD ["python"]
 
